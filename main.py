@@ -68,9 +68,9 @@ COMMAND_INFOS = {
     },
     "clear": {
         "usage":
-        "69 clear [@user] <amount>",
+        "69 clear <amount>",
         "example":
-        "69 clear 50\n69 clear @User 30",
+        "69 clear 50",
         "desc":
         "Deletes messages. Delete last <amount> or last <amount> from user. (Moderator/Admin only)"
     },
@@ -427,25 +427,38 @@ async def warns(ctx, member: discord.Member = None):
 
 @bot.command()
 @commands.has_permissions(manage_messages=True)
-async def clear(ctx, member: discord.Member = None, amount: int = None):
+async def clear(ctx, amount: int = None):
     if amount is None:
-        # maybe member is amount param here
-        if isinstance(member, int):
-            amount = member
-            member = None
-        else:
-            return await send_invalid_usage(ctx, "clear")
+        return await send_invalid_usage(ctx, "clear")
 
     if amount > 100:
         amount = 100
 
-    def check(m):
-        if member:
-            return m.author == member
-        return True
+    deleted = await ctx.channel.purge(limit=amount)
+    await ctx.send(f"🧹 Deleted {len(deleted)} message(s).", delete_after=5)
 
-    deleted = await ctx.channel.purge(limit=amount, check=check)
-    await ctx.send(f"Deleted {len(deleted)} message(s).", delete_after=5)
+
+# @bot.command()
+# @commands.has_permissions(manage_messages=True)
+# async def clear(ctx, member: discord.Member = None, amount: int = None):
+#     if amount is None:
+#         # maybe member is amount param here
+#         if isinstance(member, int):
+#             amount = member
+#             member = None
+#         else:
+#             return await send_invalid_usage(ctx, "clear")
+
+#     if amount > 100:
+#         amount = 100
+
+#     def check(m):
+#         if member:
+#             return m.author == member
+#         return True
+
+#     deleted = await ctx.channel.purge(limit=amount, check=check)
+#     await ctx.send(f"Deleted {len(deleted)} message(s).", delete_after=5)
 
 
 @bot.command()
