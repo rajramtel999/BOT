@@ -1,3 +1,7 @@
 discord.py
-motor
+python-dotenv
+Flask
+requests
 pytz
+aiohttp
+groq
